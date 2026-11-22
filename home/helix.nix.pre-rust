@@ -1,0 +1,58 @@
+{ pkgs, ... }:
+
+{
+  programs.helix = {
+    enable = true;
+    defaultEditor = true;
+    extraPackages = [ pkgs.wl-clipboard ];
+
+    settings = {
+      theme = "github_dark";
+      editor = {
+        true-color = true;
+        line-number = "relative";
+        cursorline = true;
+        color-modes = true;
+        bufferline = "multiple";
+        default-yank-register = "+";
+        lsp.display-messages = true;
+        inline-diagnostics.cursor-line = "warning";
+      };
+    };
+
+    languages = {
+      language-server.clangd = {
+        command = "clangd";
+        args = [
+          "--background-index"
+          "--clang-tidy"
+          "--header-insertion=never"
+          "--completion-style=detailed"
+        ];
+      };
+
+      language-server.gopls = {
+        command = "gopls";
+        config = {
+          staticcheck = true;
+          hints = {
+            parameterNames = true;
+            assignVariableTypes = true;
+            compositeLiteralFields = true;
+          };
+        };
+      };
+
+      language = [
+        { name = "cpp"; auto-format = true; }
+        { name = "c";   auto-format = true; }
+        {
+          name = "go";
+          auto-format = true;
+          language-servers = [ "gopls" ];
+          formatter.command = "goimports";
+        }
+      ];
+    };
+  };
+}
